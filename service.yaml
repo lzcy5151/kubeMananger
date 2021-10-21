@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubemanager
+  namespace: default
+spec:
+  ports:
+  - name: ui
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: kubemanager
+  sessionAffinity: None
+  type: NodePort
+
