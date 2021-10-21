@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from utils import kube_cluster
-from utils.k8s import NodeStats
+from utils.k8s import NodeStats, PathDeployment
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 
 import json
 # Create your views here.
@@ -27,3 +28,11 @@ def list_node_stats(request):
     }
 
     return Response(response)
+
+
+@api_view(['GET'])
+def update_image_version(request, dep_name, namespace, new_version, container_index=0):
+    path_deployment = PathDeployment(dep_name, namespace)
+    data = path_deployment.update_image(new_version, container_index)
+
+    return Response({'data': data})

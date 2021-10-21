@@ -2,7 +2,7 @@ import string
 
 from kubeManager.settings import BASE_DIR, CLUSTER_NAME
 from kubernetes import client, config
-from kubernetes.client import V1Node
+from kubernetes.client import V1Node, V1Deployment
 
 
 class Kubernetes:
@@ -29,6 +29,9 @@ class Kubernetes:
             pass
         if api_group == 'v1/apps':
             self.__api_instance = client.AppsV1Api()
+
+
+kube_cluster = Kubernetes()
 
 
 class NodeStats:
@@ -78,3 +81,34 @@ class NodeStats:
     @state.setter
     def state(self, state):
         self.__state = state
+
+
+class PathDeployment:
+    def __init__(self, deployment_name, namespace='default'):
+        kube_cluster.api_instance = 'v1/apps'
+        self.__api_instance = kube_cluster.api_instance
+        self.__deployment_name = deployment_name
+        self.__namespace = namespace
+        self.__body = self.__api_instance.read_namespaced_deployment(deployment_name, namespace)
+
+    def update_image(self, version, container_index=0):
+        img_str = self.__body.spec.template.spec.containers[container_index].image
+        image = img_str.split(':')
+        if len(image) != 2:
+            image.append('latest')
+        image[-1] = version
+        self.__body.spec.template.spec.containers[container_index].image = ':'.join(image)
+        res = self.__apply()
+
+        return {
+            'deployment': res.metadata.name,
+            'namespace': res.metadata.namespace,
+            'image': res.spec.template.spec.containers[container_index].image,
+        }
+
+    def __apply(self):
+        if isinstance(self.__body, V1Deployment):
+            return self.__api_instance.patch_namespaced_deployment(self.__deployment_name, self.__namespace, self.__body)
+
+
+

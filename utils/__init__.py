@@ -1,4 +1,4 @@
-from .k8s import Kubernetes
+from .k8s import kube_cluster
 
-kube_cluster = Kubernetes()
+
 
