@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, re_path
-from .views import list_node_stats, update_image_version, update_image
+from .views import *
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -23,7 +23,7 @@ schema_view = get_schema_view(
     openapi.Info(
         title="KubeNeuedu API",
         default_version='v0.1',
-        description="Only Support Updating the Deployment Image Version.",
+        description="版本说明：删除原有测试API，变更镜像更新API， http_method为Post",
         terms_of_service="liuzhi@neuedu.com",
         contact=openapi.Contact(email="liuzhi@neuedu.com"),
         license=openapi.License(name="None License"),
@@ -35,6 +35,7 @@ schema_view = get_schema_view(
 urlpatterns = [
 
     path('nodes/', list_node_stats),
+
     path('namespace/<str:namespace>/deployment/<str:dep_name>/container/<int:container_index>/image/<str:new_version>',
          update_image_version),
     path('<str:namespace>/<str:deployment_name>/', update_image),
