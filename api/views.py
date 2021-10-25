@@ -11,7 +11,7 @@ import json
 
 # Create your views here.
 
-@swagger_auto_schema(deprecated=True)
+@swagger_auto_schema(methods=['GET'], deprecated=True)
 @api_view(['GET'])
 def list_node_stats(request):
     nodes = kube_cluster.api_instance.list_node()
@@ -33,7 +33,7 @@ def list_node_stats(request):
     return Response(response)
 
 
-@swagger_auto_schema(deprecated=True)
+@swagger_auto_schema(methods=['GET'], deprecated=True)
 @api_view(['GET'])
 def update_image_version(request, dep_name, namespace, new_version, container_index=0):
     path_deployment = PathDeployment(dep_name, namespace)
